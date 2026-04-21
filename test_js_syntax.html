@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JavaScript Syntax Check</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>JavaScript Syntax Validation</h1>
+    
+    <div id="results"></div>
+    
+    <script>
+        const results = document.getElementById('results');
+        
+        // Test 1: Check template literal syntax
+        try {
+            const payout = {
+                payout_id: 'PO_20260320_69BCD83394951',
+                status: 'paid',
+                amount: 439.00,
+                processing_fee: 6.84,
+                net_amount: 432.16,
+                payout_method: 'mobile_money'
+            };
+            
+            const statusClass = 'success';
+            const template = `
+                <div>
+                    <td><strong>Payout ID:</strong></td>
+                    <td><code>${payout.payout_id}</code></td>
+                    <td><strong>Amount:</strong></td>
+                    <td>GH₵${payout.amount.toFixed(2)}</td>
+                    <td><strong>Method:</strong></td>
+                    <td>${payout.payout_method.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</td>
+                </div>
+            `;
+            
+            results.innerHTML += '<div class="success">✅ Template literal syntax works correctly</div>';
+        } catch (e) {
+            results.innerHTML += `<div class="error">❌ Template literal error: ${e.message}</div>`;
+        }
+        
+        // Test 2: Check function definitions
+        try {
+            function ucfirst(str) {
+                return str.charAt(0).toUpperCase() + str.slice(1);
+            }
+            
+            function downloadPayoutReceipt(payoutId) {
+                window.open(`/payouts/${payoutId}/receipt`, '_blank');
+            }
+            
+            function viewPayoutDetails(payoutId) {
+                console.log('View details for:', payoutId);
+            }
+            
+            results.innerHTML += '<div class="success">✅ All functions defined correctly</div>';
+        } catch (e) {
+            results.innerHTML += `<div class="error">❌ Function definition error: ${e.message}</div>`;
+        }
+        
+        // Test 3: Check number formatting
+        try {
+            const amount = 439.00;
+            const formatted = amount.toFixed(2);
+            results.innerHTML += `<div class="success">✅ Number formatting works: ${formatted}</div>`;
+        } catch (e) {
+            results.innerHTML += `<div class="error">❌ Number formatting error: ${e.message}</div>`;
+        }
+        
+        // Test 4: Check string manipulation
+        try {
+            const method = 'mobile_money';
+            const formatted = method.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+            results.innerHTML += `<div class="success">✅ String manipulation works: ${formatted}</div>`;
+        } catch (e) {
+            results.innerHTML += `<div class="error">❌ String manipulation error: ${e.message}</div>`;
+        }
+        
+        results.innerHTML += '<div style="margin-top: 20px;"><strong>All tests completed!</strong></div>';
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+SMARTCAST PAYOUT RECEIPT
+========================
+
+Payout ID: PO_20260320_69BCD83394951
+Organization: Cherubim Darko
+Amount: GHS 439.00
+Processing Fee: GHS 6.84
+Net Amount: GHS 432.16
+Method: Mobile Money
+  - Phone: ****9310
+  - Provider: Telecel
+  - Account Name: Portia Boakye
+Status: Paid
+Provider Reference: MM_1774087683_8645
+Requested: March 20, 2026 9:16 AM
+Processed: March 21, 2026 2:08 PM
+
+This receipt confirms the successful payout processing.
+Generated on: March 21, 2026 10:49 AM
+
+Thank you for using SmartCast!

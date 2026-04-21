@@ -1,0 +1,716 @@
+/* Modern Authentication Styles */
+
+/* Base Styles */
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.auth-body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f8fafc;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Background Elements */
+.auth-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    z-index: -2;
+}
+
+.auth-shapes {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    animation: float 6s ease-in-out infinite;
+}
+
+.shape-1 {
+    width: 300px;
+    height: 300px;
+    top: 10%;
+    left: -10%;
+    animation-delay: 0s;
+}
+
+.shape-2 {
+    width: 200px;
+    height: 200px;
+    top: 60%;
+    right: -5%;
+    animation-delay: 2s;
+}
+
+.shape-3 {
+    width: 150px;
+    height: 150px;
+    bottom: 20%;
+    left: 20%;
+    animation-delay: 4s;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-20px) rotate(180deg);
+    }
+}
+
+/* Left Panel Styles */
+.auth-left-panel {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    padding: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.auth-content {
+    max-width: 500px;
+    width: 100%;
+}
+
+.auth-brand {
+    text-align: center;
+}
+
+.auth-logo-img {
+    width: 80px;
+    height: auto;
+    margin-bottom: 1rem;
+    animation: pulse 3s ease-in-out infinite;
+}
+
+.auth-brand-text {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.auth-tagline {
+    font-size: 1.1rem;
+    color: #64748b;
+    margin-bottom: 0;
+}
+
+/* Feature Items */
+.auth-features {
+    margin-top: 3rem;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 16px;
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.feature-icon i {
+    font-size: 1.5rem;
+    color: white;
+}
+
+.feature-content h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 0.25rem;
+}
+
+.feature-content p {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 0;
+}
+
+/* Stats Section */
+.auth-stats {
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 16px;
+    padding: 2rem;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #667eea;
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+/* Form Container */
+.auth-form-container {
+    width: 100%;
+    max-width: 420px;
+    padding: 2rem;
+}
+
+.auth-form-container-wide {
+    max-width: 900px;
+}
+
+/* Large screen adjustments for registration page */
+@media (min-width: 1200px) {
+    .auth-form-container-wide {
+        max-width: 1000px;
+        padding: 2rem 4rem;
+    }
+
+    .auth-form-container-wide .auth-form-card {
+        padding: 3rem 4rem;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .auth-form-container-wide {
+        max-width: 500px;
+    }
+}
+
+/* Desktop Header Logo */
+.desktop-header-logo {
+    width: 80px;
+    height: auto;
+}
+
+.desktop-header-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Mobile Logo */
+.mobile-logo {
+    width: 60px;
+    height: auto;
+}
+
+.mobile-brand-text {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Card */
+.auth-form-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.auth-form-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-form-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.auth-form-subtitle {
+    font-size: 1rem;
+    color: #64748b;
+    margin-bottom: 0;
+}
+
+/* Form Styles */
+.auth-form {
+    margin-bottom: 2rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.input-wrapper {
+    position: relative;
+    margin-bottom: 0.5rem;
+}
+
+.input-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    font-size: 1rem;
+    z-index: 2;
+}
+
+.form-control-modern {
+    background: #f9fafb;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 0.875rem 1rem 0.875rem 3rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.form-control-modern:focus {
+    background: white;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    outline: none;
+}
+
+.input-wrapper.input-focused .input-icon {
+    color: #667eea;
+}
+
+.input-wrapper.input-filled .form-control-modern {
+    background: white;
+}
+
+/* Password Toggle */
+.password-toggle {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: color 0.2s ease;
+}
+
+.password-toggle:hover {
+    color: #667eea;
+}
+
+/* Checkbox */
+.form-check-input:checked {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+.form-check-label {
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+/* Buttons */
+.btn-modern {
+    border-radius: 12px;
+    padding: 0.875rem 1.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.btn-primary.btn-modern {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary.btn-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-outline-primary.btn-modern {
+    background: transparent;
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.btn-outline-primary.btn-modern:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Alert */
+.alert-modern {
+    border-radius: 12px;
+    border: none;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.alert-success {
+    background-color: #d1e7dd;
+    color: #0f5132;
+    border-left: 4px solid #198754;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    color: #055160;
+    border-left: 4px solid #0dcaf0;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    color: #664d03;
+    border-left: 4px solid #ffc107;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-left: 4px solid #dc3545;
+}
+
+/* Links */
+.forgot-password-link {
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.forgot-password-link:hover {
+    color: #5a67d8;
+    text-decoration: underline;
+}
+
+/* Form Footer */
+.auth-form-footer {
+    margin-top: 2rem;
+    padding-top: 2rem;
+}
+
+.divider {
+    position: relative;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #e5e7eb;
+}
+
+.divider span {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 0 1rem;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.auth-links {
+    margin-top: 1.5rem;
+}
+
+.auth-link {
+    color: #64748b;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+}
+
+.auth-link:hover {
+    color: #667eea;
+}
+
+/* Animations */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 991.98px) {
+    .auth-form-container {
+        padding: 1rem;
+    }
+    
+    .auth-form-card {
+        padding: 2rem 1.5rem;
+        margin: 1rem 0;
+    }
+    
+    .mobile-brand-text {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .auth-form-card {
+        padding: 1.5rem 1rem;
+        border-radius: 16px;
+    }
+    
+    .auth-form-title {
+        font-size: 1.5rem;
+    }
+    
+    .mobile-logo {
+        width: 50px;
+    }
+    
+    .shape-1, .shape-2, .shape-3 {
+        display: none;
+    }
+}
+
+/* Plan Selection Styles */
+.plan-selection-section {
+    margin-bottom: 2rem;
+}
+
+.plans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+/* Large screens - force 4 columns */
+@media (min-width: 1200px) {
+    .plans-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.25rem;
+    }
+
+    .plan-card-modern {
+        max-width: none;
+        padding: 1.75rem;
+    }
+
+    .plan-name {
+        font-size: 1.375rem;
+    }
+
+    .plan-price {
+        font-size: 1.625rem;
+    }
+}
+
+.plan-card-modern {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 1.5rem;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    cursor: pointer;
+}
+
+.plan-card-modern:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    border-color: rgba(102, 126, 234, 0.3);
+}
+
+.plan-card-modern.selected {
+    border-color: #667eea;
+    box-shadow: 0 15px 35px rgba(102, 126, 234, 0.25);
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.plan-card-modern.plan-popular {
+    border-color: #667eea;
+    position: relative;
+}
+
+.plan-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.plan-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.plan-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.plan-price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #667eea;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.plan-trial {
+    font-size: 0.75rem;
+    color: #10b981;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.plan-features {
+    margin-bottom: 1.5rem;
+}
+
+.plan-feature {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+.plan-feature i {
+    color: #667eea;
+    width: 16px;
+    flex-shrink: 0;
+}
+
+.plan-radio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 12px;
+}
+
+.plan-card-modern.selected .plan-radio {
+    background: rgba(102, 126, 234, 0.2);
+}
+
+/* Responsive Plan Cards */
+@media (max-width: 991.98px) {
+    .plans-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .plans-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .plan-card-modern {
+        padding: 1.25rem;
+    }
+
+    .plan-name {
+        font-size: 1.1rem;
+    }
+
+    .plan-price {
+        font-size: 1.3rem;
+    }
+
+    .plan-feature {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .plan-card-modern {
+        padding: 1rem;
+    }
+
+    .plan-header {
+        margin-bottom: 1rem;
+    }
+
+    .plan-features {
+        margin-bottom: 1rem;
+    }
+
+    .plan-radio {
+        padding: 0.5rem;
+    }
+}

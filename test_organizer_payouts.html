@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Organizer Payouts</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    </style>
+</head>
+<body>
+    <h1>Organizer Payouts Test</h1>
+    
+    <div class="test-result info">
+        <strong>Testing Organizer Payouts Page</strong><br>
+        This test checks if the organizer payouts page is accessible and working correctly.
+    </div>
+    
+    <?php
+    require_once __DIR__ . '/config/config.php';
+    require_once __DIR__ . '/vendor/autoload.php';
+    
+    // Test 1: Check if PayoutController exists
+    echo '<div class="test-result ' . (class_exists('SmartCast\Controllers\PayoutController') ? 'success' : 'error') . '">';
+    echo '<strong>Test 1: PayoutController Class</strong><br>';
+    echo class_exists('SmartCast\Controllers\PayoutController') ? '✅ PayoutController exists' : '❌ PayoutController not found';
+    echo '</div>';
+    
+    // Test 2: Check if dashboard method exists
+    echo '<div class="test-result ' . (method_exists('SmartCast\Controllers\PayoutController', 'dashboard') ? 'success' : 'error') . '">';
+    echo '<strong>Test 2: Dashboard Method</strong><br>';
+    echo method_exists('SmartCast\Controllers\PayoutController', 'dashboard') ? '✅ Dashboard method exists' : '❌ Dashboard method not found';
+    echo '</div>';
+    
+    // Test 3: Check if details method exists
+    echo '<div class="test-result ' . (method_exists('SmartCast\Controllers\PayoutController', 'details') ? 'success' : 'error') . '">';
+    echo '<strong>Test 3: Details Method</strong><br>';
+    echo method_exists('SmartCast\Controllers\PayoutController', 'details') ? '✅ Details method exists' : '❌ Details method not found';
+    echo '</div>';
+    
+    // Test 4: Check if route exists
+    $routes = include __DIR__ . '/src/Core/routes.php';
+    $hasPayoutRoute = false;
+    if (is_array($routes)) {
+        foreach ($routes as $route) {
+            if (strpos($route, '/payouts') !== false) {
+                $hasPayoutRoute = true;
+                break;
+            }
+        }
+    }
+    echo '<div class="test-result ' . ($hasPayoutRoute ? 'success' : 'error') . '">';
+    echo '<strong>Test 4: Payout Routes</strong><br>';
+    echo $hasPayoutRoute ? '✅ Payout routes found' : '❌ No payout routes found';
+    echo '</div>';
+    
+    // Test 5: Check view files exist
+    $dashboardView = file_exists(__DIR__ . '/views/organizer/payouts/dashboard.php');
+    $historyView = file_exists(__DIR__ . '/views/organizer/payouts/history.php');
+    echo '<div class="test-result ' . ($dashboardView && $historyView ? 'success' : 'error') . '">';
+    echo '<strong>Test 5: View Files</strong><br>';
+    echo 'Dashboard: ' . ($dashboardView ? '✅' : '❌') . ' | History: ' . ($historyView ? '✅' : '❌');
+    echo '</div>';
+    
+    // Test 6: Check if modal exists in views
+    $dashboardContent = file_get_contents(__DIR__ . '/views/organizer/payouts/dashboard.php');
+    $historyContent = file_get_contents(__DIR__ . '/views/organizer/payouts/history.php');
+    $hasModalDashboard = strpos($dashboardContent, 'payoutDetailsModal') !== false;
+    $hasModalHistory = strpos($historyContent, 'payoutDetailsModal') !== false;
+    echo '<div class="test-result ' . ($hasModalDashboard && $hasModalHistory ? 'success' : 'error') . '">';
+    echo '<strong>Test 6: Modal Components</strong><br>';
+    echo 'Dashboard Modal: ' . ($hasModalDashboard ? '✅' : '❌') . ' | History Modal: ' . ($hasModalHistory ? '✅' : '❌');
+    echo '</div>';
+    
+    // Test 7: Check API calls in JavaScript
+    $hasApiCallDashboard = strpos($dashboardContent, 'fetch(`<?= ORGANIZER_URL ?>/payouts/details/') !== false;
+    $hasApiCallHistory = strpos($historyContent, 'fetch(`<?= ORGANIZER_URL ?>/payouts/details/') !== false;
+    echo '<div class="test-result ' . ($hasApiCallDashboard && $hasApiCallHistory ? 'success' : 'error') . '">';
+    echo '<strong>Test 7: API Calls</strong><br>';
+    echo 'Dashboard API: ' . ($hasApiCallDashboard ? '✅' : '❌') . ' | History API: ' . ($hasApiCallHistory ? '✅' : '❌');
+    echo '</div>';
+    
+    echo '<div class="test-result info">';
+    echo '<strong>Next Steps:</strong><br>';
+    echo '1. Visit <a href="' . ORGANIZER_URL . '/payouts" target="_blank">' . ORGANIZER_URL . '/payouts</a> to test the dashboard<br>';
+    echo '2. Visit <a href="' . ORGANIZER_URL . '/payouts/history" target="_blank">' . ORGANIZER_URL . '/payouts/history</a> to test the history page<br>';
+    echo '3. Click the view button (👁️) on any payout to see the details modal';
+    echo '</div>';
+    ?>
+    
+</body>
+</html>

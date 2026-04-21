@@ -1,0 +1,22 @@
+============================================
+         SMARTCAST PAYOUT RECEIPT           
+============================================
+
+Payout ID:      PO_20260320_69BCD83394951
+Organizer:      Cherubim Darko
+--------------------------------------------
+Amount:          GHS 439.00
+Processing Fee:  GHS 6.84
+Net Amount:      GHS 432.16
+--------------------------------------------
+Method:          Mobile money
+Status:          Paid
+Reference:       MM_1774086070_7818
+Requested:       March 20, 2026 9:16 AM
+Approved:        March 21, 2026 9:40 AM
+Processed:       March 21, 2026 9:41 AM
+
+============================================
+This receipt confirms the successful payout.
+Generated on: March 21, 2026 9:41 AM
+============================================

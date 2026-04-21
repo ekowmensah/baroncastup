@@ -1,0 +1,45 @@
+{
+    "name": "smartcast/payment-gateway",
+    "description": "Production-ready payment gateway module supporting Hubtel and Paystack for mobile money and card payments",
+    "type": "library",
+    "keywords": ["payment", "gateway", "hubtel", "paystack", "mobile-money", "ghana", "momo"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "SmartCast",
+            "email": "dev@smartcastgh.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "ext-openssl": "*",
+        "ext-pdo": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "PaymentGateway\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PaymentGateway\\Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "scripts": {
+        "test": "phpunit",
+        "check": [
+            "@test"
+        ]
+    }
+}

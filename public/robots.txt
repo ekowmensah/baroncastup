@@ -1,0 +1,52 @@
+User-agent: *
+Allow: /
+
+# Allow all search engines to crawl the site
+Allow: /about
+Allow: /events
+Allow: /verify-receipt
+Allow: /login
+Allow: /register
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /organizer/
+Disallow: /superadmin/
+Disallow: /api/
+Disallow: /config/
+Disallow: /src/
+Disallow: /migrations/
+Disallow: /test_files/
+Disallow: /includes/
+
+# Disallow test and development files
+Disallow: /test_*
+Disallow: /debug_*
+Disallow: /check_*
+Disallow: /*.sql
+Disallow: /*.log
+
+# Allow important assets
+Allow: /public/css/
+Allow: /public/js/
+Allow: /public/assets/
+Allow: /public/uploads/
+
+# Sitemap location
+Sitemap: https://smartcast.mensweb.xyz/sitemap.xml
+
+# Crawl delay (be respectful)
+Crawl-delay: 1
+
+# Specific rules for major search engines
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Slurp
+Allow: /
+Crawl-delay: 2

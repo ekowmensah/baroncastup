@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="#667eea" stroke="#4c63d2" stroke-width="2"/>
+  
+  <!-- Vote box icon -->
+  <rect x="18" y="22" width="28" height="20" rx="2" fill="white" opacity="0.9"/>
+  <rect x="20" y="24" width="24" height="2" fill="#667eea"/>
+  <rect x="20" y="28" width="18" fill="#667eea" height="2"/>
+  <rect x="20" y="32" width="20" fill="#667eea" height="2"/>
+  <rect x="20" y="36" width="16" fill="#667eea" height="2"/>
+  
+  <!-- Checkmark -->
+  <path d="M24 30 L28 34 L36 26" stroke="white" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Mobile phone outline -->
+  <rect x="42" y="16" width="12" height="20" rx="2" fill="none" stroke="white" stroke-width="2"/>
+  <circle cx="48" cy="32" r="1" fill="white"/>
+</svg>

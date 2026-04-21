@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payouts Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .error { color: red; }
+        .success { color: green; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>Payouts Page Debug</h1>
+    
+    <div class="section">
+        <h2>Clear Browser Cache Instructions</h2>
+        <p><strong>Chrome/Edge:</strong> Ctrl+Shift+R (or Cmd+Shift+R on Mac)</p>
+        <p><strong>Firefox:</strong> Ctrl+F5 (or Cmd+Shift+R on Mac)</p>
+        <p><strong>Safari:</strong> Cmd+Option+R</p>
+        <p>Or open Developer Tools (F12), right-click refresh button, and select "Empty Cache and Hard Reload"</p>
+    </div>
+    
+    <div class="section">
+        <h2>Direct Links to Test</h2>
+        <p><a href="<?= ORGANIZER_URL ?>/payouts" target="_blank">Payouts Dashboard</a></p>
+        <p><a href="<?= ORGANIZER_URL ?>/payouts/history" target="_blank">Payouts History</a></p>
+    </div>
+    
+    <div class="section">
+        <h2>JavaScript Console Test</h2>
+        <p>Open browser console (F12) and run these commands to test if functions are defined:</p>
+        <pre><code>
+// Test if functions exist
+typeof viewPayoutDetails
+typeof downloadPayoutReceipt
+
+// Test if they work (if they exist)
+viewPayoutDetails(1)
+downloadPayoutReceipt(1)
+        </code></pre>
+    </div>
+    
+    <div class="section">
+        <h2>What to Check</h2>
+        <ul>
+            <li>Open Developer Tools (F12)</li>
+            <li>Go to Console tab</li>
+            <li>Look for any red error messages</li>
+            <li>Click Network tab, refresh page, and check if correct files are loading</li>
+            <li>Check if dashboard.php or history.php are being loaded (not dashboard_backupp.php)</li>
+        </ul>
+    </div>
+    
+    <div class="section">
+        <h2>Common Issues</h2>
+        <ul>
+            <li><strong>Browser Cache:</strong> Old JavaScript cached - clear cache and hard refresh</li>
+            <li><strong>Wrong File Loading:</strong> Check Network tab for which file is actually loaded</li>
+            <li><strong>JavaScript Errors:</strong> Check Console for syntax errors</li>
+        </ul>
+    </div>
+    
+    <script>
+        // Add timestamp to this page too
+        console.log('Debug page loaded at:', new Date().toISOString());
+        console.log('Cache bust: <?= time() ?>');
+    </script>
+</body>
+</html>
