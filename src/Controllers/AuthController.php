@@ -222,7 +222,7 @@ class AuthController extends BaseController
                     date('Y-m-d H:i:s', strtotime('+' . $selectedPlan['trial_days'] . ' days')) : null,
                 'active' => 1,
                 'verified' => 0,
-                'ussd_code' => '999', // Shared USSD code for all tenants (*711*999#)
+                'ussd_code' => '6855', // Shared USSD code for all tenants (*711*999#)
                 'ussd_enabled' => 0 // Disabled by default, can be enabled later
             ];
             

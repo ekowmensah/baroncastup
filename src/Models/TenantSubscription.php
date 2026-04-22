@@ -130,7 +130,8 @@ class TenantSubscription extends BaseModel
             case 'yearly':
                 return date('Y-m-d H:i:s', strtotime('+1 year'));
             case 'lifetime':
-                return date('Y-m-d H:i:s', strtotime('+50 years')); // Effectively never expires
+                // Lifetime plans should not expire. Using NULL also avoids TIMESTAMP 2038 limits.
+                return null;
             case 'free':
                 return null; // Free plans don't expire
             default:

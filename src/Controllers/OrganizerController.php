@@ -4917,7 +4917,7 @@ class OrganizerController extends BaseController
                 $this->json(['success' => false, 'message' => 'Failed to update event status'], 500);
             }
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('Event status update error: ' . $e->getMessage());
             $this->json(['success' => false, 'message' => 'An error occurred while updating event status'], 500);
         }

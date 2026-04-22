@@ -27,6 +27,20 @@ function getEventStatus($event) {
             'icon' => 'fas fa-flag-checkered',
             'description' => 'This event has been completed'
         ];
+    } elseif ($event['status'] === 'suspended') {
+        return [
+            'status' => 'paused',
+            'class' => 'warning',
+            'icon' => 'fas fa-pause-circle',
+            'description' => 'This event is paused and voting is currently disabled'
+        ];
+    } elseif ($event['status'] === 'closed') {
+        return [
+            'status' => 'stopped',
+            'class' => 'danger',
+            'icon' => 'fas fa-stop-circle',
+            'description' => 'This event has been stopped. You can resume it at any time'
+        ];
     } elseif ($now < $startTime) {
         return [
             'status' => 'upcoming',
@@ -88,6 +102,15 @@ $eventStatus = getEventStatus($event);
         <a href="<?= ORGANIZER_URL ?>/events/<?= $event['id'] ?>/export-pdf" class="btn btn-outline-success">
             <i class="fas fa-file-pdf me-1"></i>Export PDF
         </a>
+        <?php if ($event['status'] === 'active'): ?>
+            <button type="button" class="btn btn-outline-danger" onclick="stopEvent()">
+                <i class="fas fa-stop me-1"></i>Stop Event
+            </button>
+        <?php elseif (in_array($event['status'], ['closed', 'suspended'], true)): ?>
+            <button type="button" class="btn btn-outline-success" onclick="resumeEvent()">
+                <i class="fas fa-play me-1"></i>Resume Event
+            </button>
+        <?php endif; ?>
         <div class="btn-group" role="group">
             <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
                 <i class="fas fa-cog me-1"></i>More
@@ -100,6 +123,19 @@ $eventStatus = getEventStatus($event);
                                 <i class="fas fa-play me-2"></i>Publish Event
                             </button>
                         </form>
+                    </li>
+                <?php endif; ?>
+                <?php if ($event['status'] === 'active'): ?>
+                    <li>
+                        <button type="button" class="dropdown-item text-danger" onclick="stopEvent()">
+                            <i class="fas fa-stop me-2"></i>Stop Event
+                        </button>
+                    </li>
+                <?php elseif (in_array($event['status'], ['closed', 'suspended'], true)): ?>
+                    <li>
+                        <button type="button" class="dropdown-item text-success" onclick="resumeEvent()">
+                            <i class="fas fa-play me-2"></i>Resume Event
+                        </button>
                     </li>
                 <?php endif; ?>
                 <li>
@@ -143,6 +179,13 @@ $eventStatus = getEventStatus($event);
         <a href="<?= ORGANIZER_URL ?>/voting/live?event=<?= $event['id'] ?>" class="btn btn-sm btn-<?= $eventStatus['class'] ?> ms-2">
             <i class="fas fa-chart-line me-1"></i>View Live Results
         </a>
+        <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="stopEvent()">
+            <i class="fas fa-stop me-1"></i>Stop Event
+        </button>
+    <?php elseif (in_array($eventStatus['status'], ['stopped', 'paused'], true)): ?>
+        <button type="button" class="btn btn-sm btn-success ms-2" onclick="resumeEvent()">
+            <i class="fas fa-play me-1"></i>Resume Event
+        </button>
     <?php elseif (in_array($eventStatus['status'], ['ended', 'completed'])): ?>
         <a href="<?= ORGANIZER_URL ?>/voting/live?event=<?= $event['id'] ?>" class="btn btn-sm btn-<?= $eventStatus['class'] ?> ms-2">
             <i class="fas fa-trophy me-1"></i>View Final Results
@@ -191,7 +234,7 @@ $eventStatus = getEventStatus($event);
                             <tr>
                                 <td><strong>Status:</strong></td>
                                 <td>
-                                    <span class="badge bg-<?= $event['status'] === 'active' ? 'success' : ($event['status'] === 'draft' ? 'warning' : 'secondary') ?>">
+                                    <span class="badge bg-<?= $event['status'] === 'active' ? 'success' : ($event['status'] === 'draft' ? 'warning' : ($event['status'] === 'closed' ? 'danger' : ($event['status'] === 'suspended' ? 'warning' : 'secondary'))) ?>">
                                         <?= ucfirst($event['status']) ?>
                                     </span>
                                 </td>
@@ -356,8 +399,12 @@ $eventStatus = getEventStatus($event);
                             <i class="fas fa-play me-2"></i>Publish Event
                         </button>
                     <?php elseif ($event['status'] === 'active'): ?>
-                        <button class="btn btn-warning btn-sm" onclick="pauseEvent()">
-                            <i class="fas fa-pause me-2"></i>Pause Event
+                        <button class="btn btn-danger btn-sm" onclick="stopEvent()">
+                            <i class="fas fa-stop me-2"></i>Stop Event
+                        </button>
+                    <?php elseif (in_array($event['status'], ['closed', 'suspended'], true)): ?>
+                        <button class="btn btn-success btn-sm" onclick="resumeEvent()">
+                            <i class="fas fa-play me-2"></i>Resume Event
                         </button>
                     <?php endif; ?>
                     
@@ -867,11 +914,57 @@ function publishEvent() {
     }
 }
 
-function pauseEvent() {
-    if (confirm('Are you sure you want to pause this event? Voting will be temporarily disabled.')) {
-        console.log('Pausing event...');
-        alert('Event paused successfully!');
+function stopEvent() {
+    updateEventOperationalStatus(
+        'closed',
+        'Are you sure you want to stop this event now? Voting will be disabled immediately.',
+        'Event stopped successfully.',
+        'Failed to stop event.'
+    );
+}
+
+function resumeEvent() {
+    updateEventOperationalStatus(
+        'active',
+        'Are you sure you want to resume this event? Voting will be enabled immediately.',
+        'Event resumed successfully.',
+        'Failed to resume event.'
+    );
+}
+
+function updateEventOperationalStatus(status, confirmMessage, successMessage, failureMessage) {
+    if (!confirm(confirmMessage)) {
+        return;
     }
+
+    const formData = new FormData();
+    formData.append('status', status);
+    formData.append('visibility', '<?= addslashes($event['visibility']) ?>');
+
+    fetch(`<?= ORGANIZER_URL ?>/events/<?= $event['id'] ?>/update-status`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            showToast(successMessage, 'success');
+            setTimeout(() => {
+                window.location.reload();
+            }, 900);
+        } else {
+            showToast(data.message || failureMessage, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Event status update error:', error);
+        showToast('An error occurred while updating event status.', 'error');
+    });
 }
 
 function toggleResults() {
