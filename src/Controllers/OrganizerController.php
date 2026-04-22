@@ -3127,12 +3127,15 @@ class OrganizerController extends BaseController
                    e.code as event_code,
                    c.name as contestant_name,
                    c.contestant_code,
+                   vr.short_code as receipt_code,
+                   vr.public_hash as receipt_public_hash,
                    SUM(v.quantity) as votes_purchased,
                    t.msisdn as voter_phone
             FROM transactions t
             INNER JOIN events e ON t.event_id = e.id
             LEFT JOIN votes v ON t.id = v.transaction_id
             LEFT JOIN contestants c ON v.contestant_id = c.id
+            LEFT JOIN vote_receipts vr ON vr.transaction_id = t.id
             WHERE $whereClause
             GROUP BY t.id
             ORDER BY t.created_at DESC

@@ -143,6 +143,36 @@
 
 <!-- Receipts Table -->
 <div class="card">
+    <?php
+    $receiptPayloads = [];
+    if (!empty($receipts)) {
+        foreach ($receipts as $row) {
+            $transactionId = (string)($row['id'] ?? '');
+            if ($transactionId === '') {
+                continue;
+            }
+
+            $votesPurchased = (int)($row['votes_purchased'] ?? 0);
+            $amount = (float)($row['amount'] ?? 0);
+
+            $receiptPayloads[$transactionId] = [
+                'transaction_id' => (int)$row['id'],
+                'receipt_code' => $row['receipt_code'] ?? null,
+                'provider_reference' => $row['provider_reference'] ?? null,
+                'provider' => $row['provider'] ?? null,
+                'status' => $row['status'] ?? 'unknown',
+                'voter_phone' => $row['voter_phone'] ?? null,
+                'event_name' => $row['event_name'] ?? null,
+                'event_code' => $row['event_code'] ?? null,
+                'contestant_name' => $row['contestant_name'] ?? null,
+                'contestant_code' => $row['contestant_code'] ?? null,
+                'votes_purchased' => $votesPurchased,
+                'amount' => $amount,
+                'created_at_display' => !empty($row['created_at']) ? date('M j, Y g:i A', strtotime($row['created_at'])) : 'N/A'
+            ];
+        }
+    }
+    ?>
     <div class="card-header">
         <div class="d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Recent Receipts</h5>
@@ -284,6 +314,8 @@
 </div>
 
 <script>
+const receiptDataMap = <?= json_encode($receiptPayloads, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+
 function refreshReceipts() {
     console.log('Refreshing receipts...');
     location.reload();
@@ -339,62 +371,87 @@ function resetFilters() {
 }
 
 function viewReceipt(receiptId) {
-    console.log('Viewing receipt:', receiptId);
-    
-    // Sample receipt content
+    const receipt = receiptDataMap[String(receiptId)];
+    if (!receipt) {
+        document.getElementById('receiptContent').innerHTML = `
+            <div class="alert alert-warning mb-0">
+                Receipt details could not be loaded for transaction #${escapeHtml(String(receiptId))}.
+            </div>
+        `;
+        const missingModal = new coreui.Modal(document.getElementById('receiptModal'));
+        missingModal.show();
+        return;
+    }
+
+    const votes = Number(receipt.votes_purchased || 0);
+    const amount = Number(receipt.amount || 0);
+    const amountPerVote = votes > 0 ? amount / votes : 0;
+    const status = String(receipt.status || 'unknown').toLowerCase();
+    const statusClass = status === 'success' ? 'success' : (status === 'pending' ? 'warning' : 'danger');
+    const receiptCode = receipt.receipt_code || receipt.provider_reference || ('TX-' + receipt.transaction_id);
+
     const receiptContent = `
         <div class="receipt-container">
             <div class="text-center mb-4">
                 <h4>SmartCast Voting Receipt</h4>
-                <p class="text-muted">Receipt ID: ${receiptId}</p>
+                <p class="text-muted mb-1">Receipt Code: <strong>${escapeHtml(String(receiptCode))}</strong></p>
+                <p class="text-muted mb-0">Transaction ID: #${escapeHtml(String(receipt.transaction_id || 'N/A'))}</p>
             </div>
-            
+
             <div class="row">
                 <div class="col-md-6">
                     <h6>Voter Information</h6>
-                    <p><strong>Email:</strong> john.doe@email.com</p>
-                    <p><strong>Date:</strong> Nov 12, 2024 2:34 PM</p>
-                    <p><strong>IP Address:</strong> 192.168.1.100</p>
+                    <p><strong>Phone:</strong> ${escapeHtml(String(receipt.voter_phone || 'N/A'))}</p>
+                    <p><strong>Date:</strong> ${escapeHtml(String(receipt.created_at_display || 'N/A'))}</p>
                 </div>
                 <div class="col-md-6">
                     <h6>Transaction Details</h6>
-                    <p><strong>Transaction ID:</strong> TXN789456</p>
-                    <p><strong>Payment Method:</strong> Credit Card</p>
-                    <p><strong>Status:</strong> <span class="badge bg-success">Success</span></p>
+                    <p><strong>Provider:</strong> ${escapeHtml(String(receipt.provider || 'N/A'))}</p>
+                    <p><strong>Provider Reference:</strong> ${escapeHtml(String(receipt.provider_reference || 'N/A'))}</p>
+                    <p><strong>Status:</strong> <span class="badge bg-${statusClass}">${escapeHtml(status.toUpperCase())}</span></p>
                 </div>
             </div>
-            
+
             <hr>
-            
+
             <h6>Vote Details</h6>
             <table class="table table-sm">
                 <tr>
                     <td>Event:</td>
-                    <td>Beauty Contest 2024</td>
+                    <td>${escapeHtml(String(receipt.event_name || 'N/A'))} (${escapeHtml(String(receipt.event_code || 'N/A'))})</td>
                 </tr>
                 <tr>
                     <td>Contestant:</td>
-                    <td>Sarah Johnson (SJ001)</td>
+                    <td>${escapeHtml(String(receipt.contestant_name || 'N/A'))} (${escapeHtml(String(receipt.contestant_code || 'N/A'))})</td>
                 </tr>
                 <tr>
                     <td>Number of Votes:</td>
-                    <td>5 votes</td>
+                    <td>${votes.toLocaleString()} vote(s)</td>
                 </tr>
                 <tr>
                     <td>Price per Vote:</td>
-                    <td>GH₵0.50</td>
+                    <td>GHS ${amountPerVote.toFixed(2)}</td>
                 </tr>
                 <tr class="table-light">
                     <td><strong>Total Amount:</strong></td>
-                    <td><strong>GH₵2.50</strong></td>
+                    <td><strong>GHS ${amount.toFixed(2)}</strong></td>
                 </tr>
             </table>
         </div>
     `;
-    
+
     document.getElementById('receiptContent').innerHTML = receiptContent;
     const modal = new coreui.Modal(document.getElementById('receiptModal'));
     modal.show();
+}
+
+function escapeHtml(value) {
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
 }
 
 function downloadReceipt(receiptId) {
