@@ -1,0 +1,175 @@
+/* Super Admin Dashboard Styles */
+.sidebar {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Fix layout issues - ensure content doesn't hide behind sidebar */
+.c-app .wrapper {
+    margin-left: 256px; /* Fixed sidebar width */
+}
+
+@media (max-width: 992px) {
+    .c-app .wrapper {
+        margin-left: 0; /* Remove margin on mobile */
+    }
+}
+
+.body {
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+}
+
+.container-lg {
+    max-width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.sidebar-brand {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-brand-full .fa-crown {
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.active {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.header {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.stats-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 10px;
+    color: white;
+}
+
+.stats-card.critical {
+    background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+}
+
+.stats-card.success {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.stats-card.warning {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.stats-card.info {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.platform-metric {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.security-status {
+    border-left: 4px solid #28a745;
+    background-color: #d4edda;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.security-status.warning {
+    border-left-color: #ffc107;
+    background-color: #fff3cd;
+}
+
+.security-status.danger {
+    border-left-color: #dc3545;
+    background-color: #f8d7da;
+}
+
+.tenant-card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.tenant-card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.tenant-status {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.revenue-chart {
+    height: 300px;
+}
+
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+}
+
+.breadcrumb-item a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    color: white;
+}
+
+.breadcrumb-item.active {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.alert-critical {
+    background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+    color: white;
+    border: none;
+}
+
+.system-health {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.health-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #28a745;
+    animation: pulse 2s infinite;
+}
+
+.health-indicator.warning {
+    background-color: #ffc107;
+}
+
+.health-indicator.danger {
+    background-color: #dc3545;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+    }
+}

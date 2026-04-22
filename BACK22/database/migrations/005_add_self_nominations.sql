@@ -1,0 +1,37 @@
+ALTER TABLE events
+    ADD COLUMN self_nomination_enabled TINYINT(1) NOT NULL DEFAULT 0 AFTER results_visible,
+    ADD COLUMN nomination_requires_approval TINYINT(1) NOT NULL DEFAULT 1 AFTER self_nomination_enabled,
+    ADD COLUMN nomination_start_at DATETIME NULL AFTER nomination_requires_approval,
+    ADD COLUMN nomination_end_at DATETIME NULL AFTER nomination_start_at;
+
+CREATE TABLE IF NOT EXISTS nominations (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    tenant_id INT(11) NOT NULL,
+    event_id INT(11) NOT NULL,
+    category_id INT(11) DEFAULT NULL,
+    category_name_snapshot VARCHAR(255) DEFAULT NULL,
+    name VARCHAR(255) NOT NULL,
+    bio TEXT DEFAULT NULL,
+    photo_url VARCHAR(500) DEFAULT NULL,
+    email VARCHAR(255) DEFAULT NULL,
+    phone VARCHAR(50) DEFAULT NULL,
+    status ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+    contestant_id INT(11) DEFAULT NULL,
+    reviewed_by INT(11) DEFAULT NULL,
+    reviewed_at TIMESTAMP NULL DEFAULT NULL,
+    rejection_reason TEXT DEFAULT NULL,
+    submitter_ip VARCHAR(45) DEFAULT NULL,
+    user_agent VARCHAR(255) DEFAULT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY idx_nominations_tenant_status (tenant_id, status),
+    KEY idx_nominations_event_status (event_id, status),
+    KEY idx_nominations_category (category_id),
+    KEY idx_nominations_contestant (contestant_id),
+    CONSTRAINT fk_nominations_tenant FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE,
+    CONSTRAINT fk_nominations_event FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
+    CONSTRAINT fk_nominations_category FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL,
+    CONSTRAINT fk_nominations_contestant FOREIGN KEY (contestant_id) REFERENCES contestants(id) ON DELETE SET NULL,
+    CONSTRAINT fk_nominations_reviewer FOREIGN KEY (reviewed_by) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

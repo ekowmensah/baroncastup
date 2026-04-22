@@ -236,6 +236,46 @@
                                     </ul>
                                 </div>
                             </div>
+
+                            <div class="card border-primary mb-3">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-user-check me-2"></i>
+                                        Self-Nomination
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="self_nomination_enabled" name="self_nomination_enabled" value="1"
+                                               <?= !empty($eventData['self_nomination_enabled']) ? 'checked' : '' ?>>
+                                        <label class="form-check-label" for="self_nomination_enabled">
+                                            Allow the public to nominate themselves
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="nomination_requires_approval" name="nomination_requires_approval" value="1"
+                                               <?= ($eventData['nomination_requires_approval'] ?? 1) ? 'checked' : '' ?>>
+                                        <label class="form-check-label" for="nomination_requires_approval">
+                                            Require organizer approval before nominees go live
+                                        </label>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="nomination_start_at" class="form-label">Nomination Opens</label>
+                                            <input type="datetime-local" class="form-control" id="nomination_start_at" name="nomination_start_at"
+                                                   value="<?= !empty($eventData['nomination_start_at']) ? date('Y-m-d\TH:i', strtotime($eventData['nomination_start_at'])) : '' ?>">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="nomination_end_at" class="form-label">Nomination Closes</label>
+                                            <input type="datetime-local" class="form-control" id="nomination_end_at" name="nomination_end_at"
+                                                   value="<?= !empty($eventData['nomination_end_at']) ? date('Y-m-d\TH:i', strtotime($eventData['nomination_end_at'])) : '' ?>">
+                                        </div>
+                                    </div>
+                                    <div class="form-text mt-2">Leave dates blank to keep nominations open while the event is active and public.</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

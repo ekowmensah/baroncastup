@@ -52,6 +52,8 @@ class Application
         
         // Event routes
         $this->router->get('/events', 'EventController@index');
+        $this->router->get('/events/{eventSlug}/nominate', 'EventController@showNominationForm');
+        $this->router->post('/events/{eventSlug}/nominate', 'EventController@submitNomination');
         $this->router->get('/events/{eventSlug}', 'EventController@show');
         // Voting routes - Support both slug and ID
         $this->router->get('/events/{eventSlug}/vote', 'VoteController@showVoting'); // Nominee selection page
@@ -115,6 +117,7 @@ class Application
             $router->post('/events', 'OrganizerController@storeEventWizard'); // Redirect old route to wizard
             $router->post('/events/wizard', 'OrganizerController@storeEventWizard');
             // Parameterized routes MUST come last
+            $router->get('/events/{id}/nominations', 'OrganizerController@nominations');
             $router->get('/events/{id}', 'OrganizerController@showEvent');
             $router->get('/events/{id}/preview', 'OrganizerController@previewEvent');
             $router->get('/events/{id}/edit', 'OrganizerController@editEvent');
@@ -122,9 +125,15 @@ class Application
             $router->get('/events/{id}/export-pdf', 'OrganizerController@exportEventPDF');
             $router->post('/events/{id}/publish', 'OrganizerController@publishEvent');
             $router->post('/events/{id}/toggle-results', 'OrganizerController@toggleResults');
+            $router->post('/events/{id}/toggle-nominations', 'OrganizerController@toggleNominations');
             $router->post('/events/{id}/update-status', 'OrganizerController@updateEventStatus');
             
             // Contestants
+            $router->get('/nominations', 'OrganizerController@nominations');
+            $router->post('/nominations/{id}/update', 'OrganizerController@updateNomination');
+            $router->post('/nominations/{id}/approve', 'OrganizerController@approveNomination');
+            $router->post('/nominations/{id}/revoke', 'OrganizerController@revokeNomination');
+            $router->post('/nominations/{id}/reject', 'OrganizerController@rejectNomination');
             $router->get('/contestants', 'OrganizerController@contestants');
             $router->get('/contestants/create', 'OrganizerController@createContestant');
             $router->post('/contestants', 'OrganizerController@storeContestant');

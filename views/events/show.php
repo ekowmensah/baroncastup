@@ -134,11 +134,22 @@
             
             <!-- Action Section -->
             <div class="action-section">
+                <?php
+                $eventSlug = isset($event['slug']) && !empty($event['slug']) ? $event['slug'] : ($event['code'] ?? $event['id']);
+                ?>
+                <?php if (!empty($canNominate)): ?>
+                    <div class="cta-container mb-4">
+                        <a href="<?= APP_URL ?>/events/<?= htmlspecialchars($eventSlug) ?>/nominate" class="cta-button-new nomination-cta">
+                            <span class="cta-icon"><i class="fas fa-user-plus"></i></span>
+                            <span class="cta-text">Nominate Yourself</span>
+                            <span class="cta-arrow"><i class="fas fa-arrow-right"></i></span>
+                        </a>
+                        <p class="cta-subtitle">Choose a category and submit your details for organizer review</p>
+                    </div>
+                <?php endif; ?>
+
                 <?php if ($canVote): ?>
                     <div class="cta-container">
-                        <?php 
-                        $eventSlug = isset($event['slug']) && !empty($event['slug']) ? $event['slug'] : $event['id'];
-                        ?>
                         <a href="<?= APP_URL ?>/events/<?= $eventSlug ?>/vote" class="cta-button-new">
                             <span class="cta-icon"><i class="fas fa-vote-yea"></i></span>
                             <span class="cta-text">Start Voting Now</span>
@@ -914,6 +925,15 @@
     transform: translateY(-3px);
     box-shadow: 0 20px 50px rgba(40, 167, 69, 0.6);
     color: white;
+}
+
+.nomination-cta {
+    background: linear-gradient(135deg, #3758f9 0%, #00a3a3 100%);
+    box-shadow: 0 15px 40px rgba(55, 88, 249, 0.35);
+}
+
+.nomination-cta:hover {
+    box-shadow: 0 20px 50px rgba(55, 88, 249, 0.5);
 }
 
 .cta-icon {

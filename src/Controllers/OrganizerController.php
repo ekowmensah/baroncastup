@@ -5,6 +5,7 @@ namespace SmartCast\Controllers;
 use SmartCast\Models\Event;
 use SmartCast\Models\Contestant;
 use SmartCast\Models\Category;
+use SmartCast\Models\Nomination;
 use SmartCast\Models\Vote;
 use SmartCast\Models\Transaction;
 use SmartCast\Models\TenantBalance;
@@ -22,6 +23,7 @@ class OrganizerController extends BaseController
     private $eventModel;
     private $contestantModel;
     private $categoryModel;
+    private $nominationModel;
     private $voteModel;
     private $transactionModel;
     private $balanceModel;
@@ -41,6 +43,7 @@ class OrganizerController extends BaseController
         $this->eventModel = new Event();
         $this->contestantModel = new Contestant();
         $this->categoryModel = new Category();
+        $this->nominationModel = new Nomination();
         $this->voteModel = new Vote();
         $this->transactionModel = new Transaction();
         $this->balanceModel = new TenantBalance();
@@ -1178,6 +1181,17 @@ class OrganizerController extends BaseController
             $this->redirect(ORGANIZER_URL . '/events/wizard', 'Please fill in all required fields (Name, Start Date, End Date)', 'error');
             return;
         }
+
+        if (!empty($data['nomination_start_at']) && !empty($data['nomination_end_at']) &&
+            strtotime($data['nomination_end_at']) <= strtotime($data['nomination_start_at'])) {
+            $this->redirect(ORGANIZER_URL . '/events/wizard', 'Nomination close time must be after the nomination open time.', 'error');
+            return;
+        }
+
+        if (!empty($data['nomination_end_at']) && strtotime($data['nomination_end_at']) <= time()) {
+            $this->redirect(ORGANIZER_URL . '/events/wizard', 'Nomination close time must be in the future.', 'error');
+            return;
+        }
         
         // Determine action (draft, publish, or debug)
         $action = $data['action'] ?? 'draft';
@@ -1209,7 +1223,11 @@ class OrganizerController extends BaseController
                 'end_date' => $data['end_date'],
                 'vote_price' => $data['vote_price'] ?? 0.50,
                 'visibility' => $data['visibility'] ?? 'public',
-                'status' => $status
+                'status' => $status,
+                'self_nomination_enabled' => isset($_POST['self_nomination_enabled']) ? 1 : 0,
+                'nomination_requires_approval' => isset($_POST['nomination_requires_approval']) ? 1 : 0,
+                'nomination_start_at' => !empty($data['nomination_start_at']) ? $data['nomination_start_at'] : null,
+                'nomination_end_at' => !empty($data['nomination_end_at']) ? $data['nomination_end_at'] : null
             ];
             
             // Add featured image if uploaded
@@ -1502,6 +1520,9 @@ class OrganizerController extends BaseController
         
         // Get vote bundles
         $voteBundles = $this->getEventVoteBundles($id);
+
+        // Get pending public self-nominations
+        $pendingNominationCount = $this->nominationModel->countPendingForEvent($id);
         
         // Get subscription limits for actions
         $subscriptionModel = new \SmartCast\Models\TenantSubscription();
@@ -1513,7 +1534,9 @@ class OrganizerController extends BaseController
             'categoriesWithContestants' => $categoriesWithContestants,
             'recentVotes' => $recentVotes,
             'voteBundles' => $voteBundles,
+            'pendingNominationCount' => $pendingNominationCount,
             'tenantLimits' => $tenantLimits,
+            'csrfField' => $this->session->csrfField(),
             'title' => $event['name']
         ]);
         
@@ -1524,6 +1547,204 @@ class OrganizerController extends BaseController
                 ['title' => $event['name']]
             ]
         ]);
+    }
+
+    public function nominations($id = null)
+    {
+        $tenantId = $this->session->getTenantId();
+        $event = null;
+        $categories = [];
+        $status = $_GET['status'] ?? null;
+
+        if ($status && !in_array($status, ['pending', 'approved', 'rejected', 'revoked'], true)) {
+            $status = null;
+        }
+
+        if ($id) {
+            $event = $this->eventModel->find($id);
+            if (!$event || $event['tenant_id'] != $tenantId) {
+                $this->redirect(ORGANIZER_URL . '/events', 'Event not found', 'error');
+                return;
+            }
+
+            $categories = $this->categoryModel->getCategoriesByEvent($id);
+        }
+
+        $nominations = $this->nominationModel->getForTenant($tenantId, $id, $status);
+        $events = $this->eventModel->getEventsByTenant($tenantId);
+        $categoriesByEvent = [];
+        $stats = [
+            'pending' => 0,
+            'approved' => 0,
+            'revoked' => 0,
+            'rejected' => 0
+        ];
+
+        foreach ($nominations as $nomination) {
+            if (isset($stats[$nomination['status']])) {
+                $stats[$nomination['status']]++;
+            }
+
+            if (!isset($categoriesByEvent[$nomination['event_id']])) {
+                $categoriesByEvent[$nomination['event_id']] = $this->categoryModel->getCategoriesByEvent($nomination['event_id']);
+            }
+        }
+
+        $content = $this->renderView('organizer/events/nominations', [
+            'event' => $event,
+            'events' => $events,
+            'categories' => $categories,
+            'categoriesByEvent' => $categoriesByEvent,
+            'nominations' => $nominations,
+            'stats' => $stats,
+            'selectedStatus' => $status,
+            'csrfField' => $this->session->csrfField(),
+            'title' => $event ? 'Nominations - ' . $event['name'] : 'Self-Nominations'
+        ]);
+
+        echo $this->renderLayout('organizer_layout', $content, [
+            'title' => $event ? 'Event Nominations' : 'Self-Nominations',
+            'breadcrumbs' => [
+                ['title' => 'Events', 'url' => ORGANIZER_URL . '/events'],
+                ['title' => $event ? $event['name'] : 'Nominations']
+            ]
+        ]);
+    }
+
+    public function approveNomination($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect(ORGANIZER_URL . '/nominations', 'Invalid request method', 'error');
+            return;
+        }
+
+        $this->validateCsrf(ORGANIZER_URL . '/nominations');
+
+        $tenantId = $this->session->getTenantId();
+        $nomination = $this->nominationModel->findForTenant($id, $tenantId);
+
+        if (!$nomination) {
+            $this->redirect(ORGANIZER_URL . '/nominations', 'Nomination not found', 'error');
+            return;
+        }
+
+        $redirectUrl = ORGANIZER_URL . '/events/' . $nomination['event_id'] . '/nominations';
+
+        try {
+            $categoryId = !empty($_POST['category_id']) ? (int)$_POST['category_id'] : null;
+            $this->nominationModel->approveAsContestant(
+                $id,
+                $this->session->getUserId(),
+                $categoryId
+            );
+
+            $this->redirect($redirectUrl, 'Nomination approved and contestant activated successfully.', 'success');
+        } catch (\Exception $e) {
+            error_log('Approve nomination error: ' . $e->getMessage());
+            $this->redirect($redirectUrl, 'Unable to approve nomination: ' . $e->getMessage(), 'error');
+        }
+    }
+
+    public function updateNomination($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect(ORGANIZER_URL . '/nominations', 'Invalid request method', 'error');
+            return;
+        }
+
+        $this->validateCsrf(ORGANIZER_URL . '/nominations');
+
+        $tenantId = $this->session->getTenantId();
+        $nomination = $this->nominationModel->findForTenant($id, $tenantId);
+
+        if (!$nomination) {
+            $this->redirect(ORGANIZER_URL . '/nominations', 'Nomination not found', 'error');
+            return;
+        }
+
+        $redirectUrl = ORGANIZER_URL . '/events/' . $nomination['event_id'] . '/nominations';
+
+        try {
+            $data = $this->sanitizeInput($_POST);
+
+            if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+                $data['photo_url'] = $this->uploadFile($_FILES['photo'], 'nominations');
+            } elseif (isset($_FILES['photo']) && $_FILES['photo']['error'] !== UPLOAD_ERR_NO_FILE) {
+                throw new \Exception('The uploaded photo could not be processed');
+            }
+
+            $this->nominationModel->updateDetails($id, $data);
+            $this->redirect($redirectUrl, 'Nomination details updated successfully.', 'success');
+        } catch (\Exception $e) {
+            error_log('Update nomination error: ' . $e->getMessage());
+            $this->redirect($redirectUrl, 'Unable to update nomination: ' . $e->getMessage(), 'error');
+        }
+    }
+
+    public function revokeNomination($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect(ORGANIZER_URL . '/nominations', 'Invalid request method', 'error');
+            return;
+        }
+
+        $this->validateCsrf(ORGANIZER_URL . '/nominations');
+
+        $tenantId = $this->session->getTenantId();
+        $nomination = $this->nominationModel->findForTenant($id, $tenantId);
+
+        if (!$nomination) {
+            $this->redirect(ORGANIZER_URL . '/nominations', 'Nomination not found', 'error');
+            return;
+        }
+
+        $redirectUrl = ORGANIZER_URL . '/events/' . $nomination['event_id'] . '/nominations';
+        $reason = trim($_POST['reason'] ?? '');
+
+        if ($reason === '') {
+            $reason = 'Revoked by organizer';
+        }
+
+        try {
+            $this->nominationModel->revokeApproval($id, $this->session->getUserId(), $reason);
+            $this->redirect($redirectUrl, 'Nomination revoked and contestant hidden.', 'success');
+        } catch (\Exception $e) {
+            error_log('Revoke nomination error: ' . $e->getMessage());
+            $this->redirect($redirectUrl, 'Unable to revoke nomination: ' . $e->getMessage(), 'error');
+        }
+    }
+
+    public function rejectNomination($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect(ORGANIZER_URL . '/nominations', 'Invalid request method', 'error');
+            return;
+        }
+
+        $this->validateCsrf(ORGANIZER_URL . '/nominations');
+
+        $tenantId = $this->session->getTenantId();
+        $nomination = $this->nominationModel->findForTenant($id, $tenantId);
+
+        if (!$nomination) {
+            $this->redirect(ORGANIZER_URL . '/nominations', 'Nomination not found', 'error');
+            return;
+        }
+
+        $redirectUrl = ORGANIZER_URL . '/events/' . $nomination['event_id'] . '/nominations';
+        $reason = trim($_POST['reason'] ?? '');
+
+        if ($reason === '') {
+            $reason = 'Rejected by organizer';
+        }
+
+        try {
+            $this->nominationModel->reject($id, $this->session->getUserId(), $reason);
+            $this->redirect($redirectUrl, 'Nomination rejected.', 'success');
+        } catch (\Exception $e) {
+            error_log('Reject nomination error: ' . $e->getMessage());
+            $this->redirect($redirectUrl, 'Unable to reject nomination: ' . $e->getMessage(), 'error');
+        }
     }
     
     /**
@@ -4344,6 +4565,63 @@ class OrganizerController extends BaseController
         } else {
             $this->redirect(ORGANIZER_URL . "/events/{$eventId}", 'Failed to update results visibility', 'error');
         }
+    }
+
+    public function toggleNominations($eventId)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect(ORGANIZER_URL . "/events/{$eventId}", 'Invalid request method', 'error');
+            return;
+        }
+
+        $this->validateCsrf(ORGANIZER_URL . "/events/{$eventId}");
+
+        $tenantId = $this->session->getTenantId();
+        $event = $this->eventModel->find($eventId);
+
+        if (!$event || $event['tenant_id'] != $tenantId) {
+            $this->redirect(ORGANIZER_URL . '/events', 'Event not found or access denied', 'error');
+            return;
+        }
+
+        $currentlyOpen = !empty($event['self_nomination_enabled']);
+        $newStatus = $currentlyOpen ? 0 : 1;
+        $updateData = ['self_nomination_enabled' => $newStatus];
+
+        if ($newStatus === 1) {
+            if (!empty($event['nomination_end_at']) && strtotime($event['nomination_end_at']) <= time()) {
+                $this->redirect(
+                    ORGANIZER_URL . "/events/{$eventId}",
+                    'Nomination deadline has passed. Extend the nomination close time before reopening.',
+                    'error'
+                );
+                return;
+            }
+
+            $categoryCount = $this->categoryModel->count(['event_id' => $eventId]);
+            if ($categoryCount < 1) {
+                $this->redirect(
+                    ORGANIZER_URL . "/events/{$eventId}",
+                    'Add at least one category before opening self-nominations.',
+                    'error'
+                );
+                return;
+            }
+
+            if (!empty($event['nomination_start_at']) && strtotime($event['nomination_start_at']) > time()) {
+                $updateData['nomination_start_at'] = date('Y-m-d H:i:s');
+            }
+        }
+
+        $updated = $this->eventModel->update($eventId, $updateData);
+
+        if ($updated) {
+            $message = $newStatus ? 'Self-nominations opened successfully.' : 'Self-nominations closed successfully.';
+            $this->redirect(ORGANIZER_URL . "/events/{$eventId}", $message, 'success');
+            return;
+        }
+
+        $this->redirect(ORGANIZER_URL . "/events/{$eventId}", 'Failed to update self-nomination status.', 'error');
     }
     
     private function getCategoriesByTenant($tenantId)

@@ -1,0 +1,125 @@
+/* Organizer Dashboard Styles */
+.sidebar {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+}
+
+.sidebar-brand {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.active {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.stats-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 10px;
+    color: white;
+}
+
+.stats-card.success {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.stats-card.warning {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.stats-card.info {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transition: box-shadow 0.3s ease;
+}
+
+.badge {
+    font-size: 0.75em;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: #495057;
+}
+
+.btn {
+    border-radius: 6px;
+}
+
+.alert {
+    border: none;
+    border-radius: 8px;
+}
+
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+    color: #6c757d;
+}
+
+/* Fix layout issues - ensure content doesn't hide behind sidebar */
+.c-app .wrapper {
+    margin-left: 256px; /* Fixed sidebar width */
+}
+
+@media (max-width: 992px) {
+    .c-app .wrapper {
+        margin-left: 0; /* Remove margin on mobile */
+    }
+}
+
+/* Sidebar minimized state */
+.sidebar-minimized .wrapper {
+    margin-left: 56px; /* Minimized sidebar width */
+}
+
+@media (max-width: 992px) {
+    .sidebar-minimized .wrapper {
+        margin-left: 0; /* Remove margin on mobile even when minimized */
+    }
+}
+
+.body {
+    padding-top: 1rem;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+}
+
+.container-lg {
+    max-width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+/* Fix header z-index */
+.header {
+    z-index: 1020;
+}
+
+/* Mobile sidebar behavior */
+@media (max-width: 992px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .sidebar.sidebar-show {
+        transform: translateX(0);
+    }
+}
