@@ -23,7 +23,7 @@ return [
      * This is the short code you register with your telecom provider (Hubtel, MTN, etc.)
      * IMPORTANT: This MUST match the code registered in your Hubtel/MTN dashboard
      */
-    'base_code' => env('USSD_BASE_CODE', '711'),
+    'base_code' => env('USSD_BASE_CODE', '713'),
     
     /**
      * USSD Code Format
